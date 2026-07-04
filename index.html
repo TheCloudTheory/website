@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Cloud Theory</title>
+  <meta name="description" content="The Cloud Theory — open-source cloud tooling, Azure emulation, and books by Kamil Mrzygłód." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue-dark:  #1B7CA0;
+      --blue-light: #53AEDD;
+      --bg:         #0a0f14;
+      --surface:    #111820;
+      --border:     rgba(83, 174, 221, 0.15);
+      --text:       #e2eaf0;
+      --muted:      #7a9ab0;
+      --radius:     12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem;
+      background: rgba(10, 15, 20, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    nav img { height: 36px; }
+    nav ul { list-style: none; display: flex; gap: 2rem; }
+    nav a { color: var(--muted); text-decoration: none; font-size: .9rem; font-weight: 500; transition: color .2s; }
+    nav a:hover { color: var(--blue-light); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 6rem 2rem 4rem;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(83,174,221,.12) 0%, transparent 70%),
+        var(--bg);
+    }
+    .hero-inner { max-width: 720px; }
+    .hero img { height: 80px; margin-bottom: 2rem; filter: drop-shadow(0 0 24px rgba(83,174,221,.4)); }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 600;
+      letter-spacing: -.02em;
+      line-height: 1.15;
+      margin-bottom: 1.25rem;
+      background: linear-gradient(135deg, #fff 30%, var(--blue-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero p { font-size: 1.15rem; color: var(--muted); max-width: 540px; margin: 0 auto 2.5rem; }
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .75rem 1.75rem;
+      border-radius: 8px;
+      font-size: .95rem; font-weight: 500;
+      text-decoration: none;
+      transition: all .2s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue-light));
+      color: #fff;
+    }
+    .btn-primary:hover { opacity: .85; transform: translateY(-1px); }
+    .btn-ghost {
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: transparent;
+    }
+    .btn-ghost:hover { border-color: var(--blue-light); color: var(--blue-light); transform: translateY(-1px); }
+    .hero-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    /* ── SECTIONS ── */
+    section { padding: 5rem 2rem; }
+    .container { max-width: 1080px; margin: 0 auto; }
+    .section-label {
+      font-size: .75rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--blue-light); margin-bottom: .75rem;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 600;
+      letter-spacing: -.02em; margin-bottom: 1rem;
+    }
+    .section-sub { color: var(--muted); max-width: 520px; margin-bottom: 3rem; }
+
+    /* ── PROJECTS GRID ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.25rem;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+      display: flex; flex-direction: column; gap: .75rem;
+    }
+    .card:hover {
+      border-color: var(--blue-light);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(83,174,221,.1);
+    }
+    .card-header { display: flex; align-items: center; justify-content: space-between; }
+    .card-icon { font-size: 1.5rem; }
+    .card-logo {
+      height: 56px; width: auto;
+      background: #fff;
+      border-radius: 10px;
+      padding: 6px 10px;
+      object-fit: contain;
+    }
+    .card-badge {
+      font-size: .7rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+      padding: .2rem .6rem; border-radius: 999px;
+      background: rgba(83,174,221,.12); color: var(--blue-light);
+    }
+    .card h3 { font-size: 1.05rem; font-weight: 600; }
+    .card p { font-size: .9rem; color: var(--muted); flex: 1; }
+    .card-link { font-size: .85rem; color: var(--blue-light); font-weight: 500; }
+    .card .btn-ghost { align-self: flex-start; padding: .5rem 1.25rem; font-size: .85rem; margin-top: .25rem; }
+
+    /* ── BOOKS ── */
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+    .book-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+      display: flex; flex-direction: column; gap: .75rem;
+    }
+    .book-card:hover {
+      border-color: var(--blue-light);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(83,174,221,.1);
+    }
+    .book-publisher {
+      font-size: .75rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--blue-light);
+    }
+    .book-card h3 { font-size: 1.05rem; font-weight: 600; line-height: 1.3; }
+    .book-card p { font-size: .9rem; color: var(--muted); flex: 1; }
+    .book-card .btn-ghost { margin-top: .5rem; align-self: flex-start; padding: .5rem 1.25rem; font-size: .85rem; }
+
+    /* ── ABOUT ── */
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+    }
+    @media (max-width: 640px) { .about-grid { grid-template-columns: 1fr; gap: 2rem; } }
+    .about-text p { color: var(--muted); margin-bottom: 1rem; }
+    .stats { display: flex; gap: 2.5rem; margin-top: 2rem; flex-wrap: wrap; }
+    .stat-value { font-size: 2rem; font-weight: 600; color: var(--blue-light); }
+    .stat-label { font-size: .8rem; color: var(--muted); margin-top: .15rem; }
+    .about-visual {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    .tech-tag {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: rgba(83,174,221,.08); border: 1px solid var(--border);
+      color: var(--text); font-size: .85rem; padding: .35rem .85rem;
+      border-radius: 999px; margin: .25rem;
+    }
+
+    /* ── DIVIDER ── */
+    .divider { border: none; border-top: 1px solid var(--border); }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 2.5rem 2rem;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+      color: var(--muted); font-size: .85rem;
+    }
+    footer a { color: var(--muted); text-decoration: none; transition: color .2s; }
+    footer a:hover { color: var(--blue-light); }
+    footer img { height: 28px; opacity: .7; }
+
+    @media (max-width: 640px) {
+      nav ul { display: none; }
+      footer { justify-content: center; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <img src="static/tct.svg" alt="The Cloud Theory" />
+    <ul>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#books">Books</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="https://github.com/TheCloudTheory" target="_blank" rel="noopener">GitHub ↗</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <img src="static/tct.svg" alt="The Cloud Theory logo" />
+      <h1>Cloud tooling built for developers</h1>
+      <p>Open-source projects, Azure emulation, and educational resources — everything to make your cloud journey faster and more productive.</p>
+      <div class="hero-ctas">
+        <a href="#projects" class="btn btn-primary">Explore projects</a>
+        <a href="https://github.com/TheCloudTheory" target="_blank" rel="noopener" class="btn btn-ghost">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.92.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="container">
+      <p class="section-label">Open Source</p>
+      <h2 class="section-title">Projects</h2>
+      <p class="section-sub">Tools and libraries built to solve real cloud development problems.</p>
+
+      <div class="projects-grid">
+
+        <a class="card" href="https://github.com/TheCloudTheory/Topaz" target="_blank" rel="noopener">
+          <div class="card-header">
+            <img src="static/topaz-logo.png" alt="Topaz" class="card-logo" />
+            <span class="card-badge">Flagship</span>
+          </div>
+          <h3>Topaz</h3>
+          <p>Local Azure emulator. Run Azure services like Storage, Service Bus, Event Hubs, and more — entirely on your machine, no cloud subscription required.</p>
+          <span class="btn btn-ghost">View on GitHub →</span>
+        </a>
+
+        <a class="card" href="https://github.com/TheCloudTheory/arm-estimator" target="_blank" rel="noopener">
+          <div class="card-header">
+            <img src="static/ace-logo.png" alt="Azure Cost Estimator" class="card-logo" />
+            <span class="card-badge">FinOps</span>
+          </div>
+          <h3>Azure Cost Estimator</h3>
+          <p>Estimate Azure infrastructure costs directly from ARM / Bicep templates before you deploy — fits neatly into CI/CD pipelines.</p>
+          <span class="btn btn-ghost">View on GitHub →</span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- BOOKS -->
+  <section id="books">
+    <div class="container">
+      <p class="section-label">Published</p>
+      <h2 class="section-title">Books</h2>
+      <p class="section-sub">Practical guides to Azure development and administration, published by Packt.</p>
+
+      <div class="books-grid">
+
+        <a class="book-card" href="https://www.amazon.com/s?k=Azure+for+Developers+Kamil+Mrzyglod" target="_blank" rel="noopener">
+          <span class="book-publisher">Packt · Amazon</span>
+          <h3>Azure for Developers</h3>
+          <p>A hands-on guide covering the core Azure services, patterns, and best practices every developer building on Azure needs to know.</p>
+          <span class="btn btn-ghost">View on Amazon →</span>
+        </a>
+
+        <a class="book-card" href="https://www.amazon.com/s?k=Learn+Azure+Administration+Kamil+Mrzyglod" target="_blank" rel="noopener">
+          <span class="book-publisher">Packt · Amazon</span>
+          <h3>Learn Azure Administration</h3>
+          <p>A comprehensive walkthrough of administering Azure environments — identity, governance, networking, storage, and compute covered in depth.</p>
+          <span class="btn btn-ghost">View on Amazon →</span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-text">
+          <p class="section-label">About</p>
+          <h2 class="section-title">The Cloud Theory</h2>
+          <p>The Cloud Theory is an independent brand focused on building open-source tooling that makes Azure development more approachable, faster, and cheaper to iterate on.</p>
+          <p>Behind the brand is <strong>Kamil Mrzygłód</strong> — Azure developer, author, and OSS contributor. The projects range from full Azure service emulation to cost estimation tooling and developer extensions.</p>
+          <div class="stats">
+            <div>
+              <div class="stat-value">250+</div>
+              <div class="stat-label">GitHub stars</div>
+            </div>
+            <div>
+              <div class="stat-value">5</div>
+              <div class="stat-label">Published books</div>
+            </div>
+            <div>
+              <div class="stat-value">Azure</div>
+              <div class="stat-label">Focus area</div>
+            </div>
+          </div>
+        </div>
+        <div class="about-visual">
+          <p style="font-size:.85rem;color:var(--muted);margin-bottom:.5rem;">Tech &amp; focus areas</p>
+          <div>
+            <span class="tech-tag">Azure</span>
+            <span class="tech-tag">.NET / C#</span>
+            <span class="tech-tag">Terrafoirm</span>
+            <span class="tech-tag">IaC</span>
+            <span class="tech-tag">FinOps</span>
+            <span class="tech-tag">DevOps</span>
+            <span class="tech-tag">Containers</span>
+            <span class="tech-tag">Kubernetes</span>
+            <span class="tech-tag">AI</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <img src="static/tct.svg" alt="The Cloud Theory" />
+    <span>© 2026 The Cloud Theory · All rights reserved</span>
+    <div style="display:flex;gap:1.5rem;">
+      <a href="https://github.com/TheCloudTheory" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.amazon.com/s?k=Kamil+Mrzyglod" target="_blank" rel="noopener">Amazon</a>
+    </div>
+  </footer>
+
+</body>
+</html>
