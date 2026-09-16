@@ -242,6 +242,32 @@ To wymaga **Azure Object Replication** (nie natywnego GZRS): GZRS replikuje blob
 
 ---
 
+# A co z "OR Priority Replication"?
+
+Nowa opcja: **99,0% obiektów replikowanych w 15 minut**, poparte SLA (dla tego samego kontynentu).
+
+**Nie rozwiązuje problemu seedingu** — SLA jawnie wyklucza "Existing blob replication ... following a recent Replication Policy creation or update" — czyli dokładnie nasz jednorazowy catch-up ~150M obiektów. Plan azcopy → OR nie traci na aktualności.
+
+**Może mieć znaczenie po zakończeniu seedingu** — SLA 99%/15 min dotyczy replikacji *nowych* zapisów (RPO, nie RTO). 
+
+Źródło: [Object Replication Priority Replication — SLA eligibility and exclusions](https://learn.microsoft.com/en-us/azure/storage/blobs/object-replication-priority-replication#sla-eligibility-and-exclusions)
+
+---
+
+# OR Priority Replication — dwa zastrzeżenia
+
+**Koszt**: **0,015 $/GB** od całego nowego ingressu — ponad standardowe koszty transakcji/egress OR. Po wyłączeniu — billing trwa jeszcze 30 dni.
+
+Gdyby liczyć od całego backfillu (przykładowo ~1 755 TB): **1 755 TB × 1 024 GB/TB × 0,015 $/GB ≈ 26 957 $** — jednorazowo, na sam ten metr. W praktyce nieopłacalne.
+
+**Ograniczenie**: tylko **jedna** polityka OR per konto źródłowe może mieć włączone Priority Replication (konto może mieć maks. dwie polityki OR w ogóle).
+
+Źródła:
+[Object Replication Priority Replication — Feature pricing](https://learn.microsoft.com/en-us/azure/storage/blobs/object-replication-priority-replication#feature-pricing)
+[Azure Blob Storage Pricing — Object Replication Priority Replication Prices](https://azure.microsoft.com/en-us/pricing/details/storage/blobs/)
+
+---
+
 # Porównanie kosztów replikacji (wolumen magazynu logów)
 
 | Podejście | Koszt dodatkowy/mies. |
